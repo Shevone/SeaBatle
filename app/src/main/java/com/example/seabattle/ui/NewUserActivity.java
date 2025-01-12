@@ -1,5 +1,6 @@
 package com.example.seabattle.ui;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +21,7 @@ public class NewUserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         newPlayerNameEditText = findViewById(R.id.newPlayerNameEditText);
         Button createPlayerButton = findViewById(R.id.createPlayerButton);
         playerService = PlayerService.getInstance(this);

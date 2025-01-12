@@ -2,6 +2,7 @@ package com.example.seabattle.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -37,10 +38,6 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
     private final Map<Integer, TextView[][]> cellsByPlayer = new HashMap<>();
     private int maxCellWidth = 0;
 
-    private Timer timer;
-    private long lastToastTime = 0;
-    private static final long TOAST_INTERVAL = 15000;
-
     private VibrationService vibrationService;
 
     private GameService gameService;
@@ -52,6 +49,7 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         vibrationService = new VibrationService(this);
         // Инициализация сервиса игры
 
@@ -102,31 +100,6 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
 
         this.drawBoard(currentPlayerCells, player.getPlayerBoard());
         this.drawBoard(oppCells, bot.getPlayerBoard());
-//        // Инициализация таймера хода
-//        timer = new Timer();
-//        timer.setListener(new Timer.TimerListener() {
-//            @Override
-//            public void onTick(String time) {
-//                long currentTime = System.currentTimeMillis();
-//                if (currentTime - lastToastTime >= TOAST_INTERVAL) {
-//                    Toast.makeText(
-//                            GameActivity.this,
-//                            "Осталось: " + time,
-//                            Toast.LENGTH_SHORT).show();
-//                    lastToastTime = currentTime;
-//                }
-//            }
-//
-//            @Override
-//            public void onFinished() {
-//                Toast.makeText(
-//                        GameActivity.this,
-//                        "Время вышло!",
-//                        Toast.LENGTH_LONG).show();
-//            }
-//        });
-//
-//        timer.start();
     }
 
     @Override

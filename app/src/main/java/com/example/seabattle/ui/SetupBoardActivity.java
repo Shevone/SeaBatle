@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +28,8 @@ public class SetupBoardActivity extends AppCompatActivity {
     private final String NOT_READY_TEXT = "Поле еще не готово к битве!";
     private final String ERROR_CREATE_TEXT = "Ошибка при создании объекта на поле";
 
+    private LinearLayout mainLayout;
+    private LinearLayout gridContainer;
     private GridLayout gridLayout;
     private TextView[][] gridCells;
 
@@ -47,7 +52,8 @@ public class SetupBoardActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        mainLayout = findViewById(R.id.mainLayout);
+        gridContainer = findViewById(R.id.gridContainer);
         gridLayout = findViewById(R.id.grid_layout);
         gridCells = new TextView[10][10];
 
@@ -132,9 +138,41 @@ public class SetupBoardActivity extends AppCompatActivity {
     }
 
     /**
+     * Расчет размера соты
+     *
+     * @return int - размер
+     */
+    private int calculateCellSize() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int screenWidth = displayMetrics.widthPixels;
+        int screenHeight = displayMetrics.heightPixels;
+        int numberOfColumns = 10;
+        int numberOfRows = 10;
+        int screenPadding = 16; // Отступ в dp
+
+        int paddingPixels = (int)(screenPadding * getResources().getDisplayMetrics().density);
+
+        int availableWidth = screenWidth - (2 * paddingPixels);
+        int availableHeight = screenHeight - (2 * paddingPixels);
+
+        int cellSizeWidth = availableWidth / numberOfColumns;
+        int cellSizeHeight = availableHeight / numberOfRows;
+
+        return Math.min(cellSizeWidth, cellSizeHeight);
+    }
+
+    /**
      * Создание сетки.
      */
     private void createGrid() {
+
+        int cellSize = calculateCellSize();
+
+
+        // Устанавливаем margin на GridLayout
+        int marginSize = 2;
+
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 TextView cell = new TextView(this);
@@ -151,13 +189,9 @@ public class SetupBoardActivity extends AppCompatActivity {
                         GridLayout.spec(col)
                 );
 
-                // Устанавливаем ширину и высоту
-                int cellSize = 100; // Размер ячейки (можно настроить)
                 params.width = cellSize;
                 params.height = cellSize;
 
-                // Устанавливаем отступы вокруг ячеек
-                int marginSize = 2;
                 params.setMargins(marginSize, marginSize, marginSize, marginSize);
                 cellFrame.setLayoutParams(params);
 

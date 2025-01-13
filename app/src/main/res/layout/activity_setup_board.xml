@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/mainLayout"
     tools:context=".ui.SetupBoardActivity">
 
     <TextView
@@ -14,13 +15,24 @@
         android:text="Игрок: "
         android:textSize="18sp" />
 
-    <GridLayout
-        android:id="@+id/grid_layout"
+    <!--  ОБЕРТКА ДЛЯ СЕТКИ-->
+    <LinearLayout
+        android:id="@+id/gridContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="10"
-        android:rowCount="10">
-    </GridLayout>
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal">
+
+        <GridLayout
+            android:id="@+id/grid_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:columnCount="10"
+            android:rowCount="10"
+            />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

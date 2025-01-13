@@ -200,20 +200,16 @@ public class Bot extends Player {
 
         switch (shotDirection) {
             case (0):
-                // вправо
                 direction = 1;
                 break;
             case (1):
-                // влево
                 direction = 0;
                 break;
             case (2):
-                // вниз
                 direction = 3;
                 break;
             case (3):
-                // вверх
-                direction = 4;
+                direction = 2;
                 break;
             default:
                 direction = random.nextInt(3);
@@ -233,25 +229,25 @@ public class Bot extends Player {
         int[] result = null;
         switch (direction) {
             case (0):
-                // вправо
+                // вниз
                 if (lastShot[0] + 1 <= 9) {
                     result = new int[]{lastShot[0] + 1, lastShot[1]};
                 }
                 break;
             case (1):
-                // влево
+                // вверх
                 if (lastShot[0] - 1 >= 0) {
                     result = new int[]{lastShot[0] - 1, lastShot[1]};
                 }
                 break;
             case (2):
-                // вниз
+                // влево
                 if (lastShot[1] - 1 >= 0) {
                     result = new int[]{lastShot[0], lastShot[1] - 1};
                 }
                 break;
             case (3):
-                // вверх
+                // вправо
                 if (lastShot[1] + 1 <= 9) {
                     result = new int[]{lastShot[0], lastShot[1] + 1};
                 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,8 @@ import java.util.Map;
 
 public class GameActivity extends AppCompatActivity implements GameObserver {
 
+    private static final int MAX_CELL_SIZE_DP = 90;
+    private static final int MIN_CELL_SIZE_DP = 20;
     private final Map<Integer, TextView[][]> cellsByPlayer = new HashMap<>();
     private int maxCellWidth = 0;
 
@@ -43,6 +46,8 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
     private GameService gameService;
 
     private Player player;
+
+    private int cellSize = 50;
 
 
     @Override
@@ -72,7 +77,7 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
         TextView[][] currentPlayerCells = this.createCell(this.player.getID());
         TextView[][] oppCells = this.createCell(bot.getID());
 
-
+        cellSize = calculateCellSize();
         createGrid(player1Grid, currentPlayerCells, false);
         createGrid(player2Grid, oppCells, true);
 
@@ -100,6 +105,29 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
 
         this.drawBoard(currentPlayerCells, player.getPlayerBoard());
         this.drawBoard(oppCells, bot.getPlayerBoard());
+    }
+
+    private int calculateCellSize() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int screenWidth = displayMetrics.widthPixels;
+        int screenHeight = displayMetrics.heightPixels;
+        int numberOfColumns = 10;
+        int numberOfRows = 10;
+        int screenPadding = 16; // Отступ в dp
+
+        int paddingPixels = (int)(screenPadding * getResources().getDisplayMetrics().density);
+
+        int availableWidth = screenWidth - (2 * paddingPixels);
+        int availableHeight = screenHeight - (2 * paddingPixels);
+
+        int cellSizeWidth = availableWidth / numberOfColumns;
+        int cellSizeHeight = availableHeight / numberOfRows;
+
+        int min = Math.min(cellSizeWidth, cellSizeHeight);
+        float a = (float) (min * 0.8);
+        int res = Math.round(a);
+        return res;
     }
 
     @Override
@@ -184,8 +212,8 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
     /**
      * Обработчик нажаитя на "соты"
      *
-     * @param row  int
-     * @param col  int
+     * @param row int
+     * @param col int
      */
     private void onCellClick(int row, int col) {
         // Сейчас ход текущего игрока?
@@ -266,6 +294,7 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
      * @param isClickable boolean - клибалельно ли поле.
      */
     private void createGrid(GridLayout gridLayout, TextView[][] gridCells, boolean isClickable) {
+
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 TextView cell = new TextView(this);
@@ -282,8 +311,7 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
                         GridLayout.spec(col)
                 );
 
-                // Устанавливаем ширину и высоту
-                int cellSize = 100; // Размер ячейки (можно настроить)
+
                 params.width = cellSize;
                 params.height = cellSize;
 
@@ -306,7 +334,6 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
                     });
                 }
                 gridLayout.addView(cellFrame);
-
             }
         }
     }

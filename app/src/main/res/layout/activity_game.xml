@@ -23,8 +23,9 @@
 
             <GridLayout
                 android:id="@+id/player1_grid"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:columnCount="10"
                 android:rowCount="10">
             </GridLayout>
@@ -47,8 +48,9 @@
 
             <GridLayout
                 android:id="@+id/player2_grid"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:columnCount="10"
                 android:rowCount="10">
             </GridLayout>

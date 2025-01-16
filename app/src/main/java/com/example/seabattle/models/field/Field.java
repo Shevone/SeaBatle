@@ -18,11 +18,6 @@ public final class Field {
     private final Integer MINE_KEY = 0;
 
     /**
-     * Координаты текущего корабля
-     */
-    private final List<int[]> currentShipCoordinates = new ArrayList<>();
-
-    /**
      * Список выбранных координат
      */
     private final List<int[]> selectedCells = new ArrayList<>();
@@ -97,24 +92,6 @@ public final class Field {
     }
 
     /**
-     * Размер создаваемого корабля
-     *
-     * @return int
-     */
-    public int getCurrentShipSize() {
-        return this.currentShipCoordinates.size();
-    }
-
-    /**
-     * Возвращает координаты текущего корабля
-     *
-     * @return List<int [ ]>
-     */
-    public List<int[]> getCurrentShipCoordinates() {
-        return this.currentShipCoordinates;
-    }
-
-    /**
      * Возвращает координаты занятых точек
      *
      * @return List<int [ ]>
@@ -123,71 +100,36 @@ public final class Field {
         return this.selectedCells;
     }
 
-    /**
-     * Очистка выбранной точки теущего корабля
-     *
-     * @param row int
-     * @param col int
-     */
-    public void removeCellFromSelection(int row, int col) {
-        for (int i = 0; i < currentShipCoordinates.size(); i++) {
-            int[] cell = currentShipCoordinates.get(i);
-            if (cell[0] == row && cell[1] == col) {
-                currentShipCoordinates.remove(i);
-                break;
-            }
-        }
-    }
 
     /**
-     * Добавление точки в список выбранных точек
-     *
-     * @param row int
-     * @param col int
-     */
-    public void addCellToSelection(int row, int col) {
-        currentShipCoordinates.add(new int[]{row, col});
-        if (currentShipCoordinates.size() == 2) {
-            determineShipOrientation();
-        }
-    }
-
-    /**
-     * Можо ли занимать данную точку
+     * Можо ли занимать данную точку.
+     * Не является ли она уже выбранной
+     * И
+     * Нет ли вокруг этой точки других
      *
      * @param row int
      * @param col int
      * @return boolean
      */
     public boolean isValidCellForSelection(int row, int col) {
-        if (currentShipCoordinates.size() >= 4) {
+        if (board[row][col] != null) {
             return false;
         }
 
-        if (currentShipCoordinates.isEmpty()) {
-            return isCellValidForPlacement(row, col);
+        for (int i = row - 1; i <= row + 1; i++) {
+            if (i < 0 || i > 9) {
+                continue;
+            }
+            for (int j = col - 1; j < col + 1; j++) {
+                if (j < 0 || j > 9) {
+                    continue;
+                }
+                if (board[i][j] != null) {
+                    return false;
+                }
+            }
         }
-
-        int[] lastCell = currentShipCoordinates.get(currentShipCoordinates.size() - 1);
-        int lastRow = lastCell[0];
-        int lastCol = lastCell[1];
-
-        boolean isOk = Math.abs(lastRow - row) + Math.abs(lastCol - col) == 1
-                && isCellValidForPlacement(row, col);
-
-        if (currentShipCoordinates.size() == 1) {
-            return isOk;
-        }
-
-        if (shipOrientation == 0) {
-            return row == lastRow && isOk;
-        }
-
-        if (shipOrientation == 1) {
-            return col == lastCol && isOk;
-        }
-
-        return false;
+        return true;
     }
 
     /**
@@ -215,22 +157,6 @@ public final class Field {
     }
 
     /**
-     * Является ли "сота" выбранной
-     *
-     * @param row int
-     * @param col int
-     * @return boolean
-     */
-    public boolean isCellSelected(int row, int col) {
-        for (int[] cell : currentShipCoordinates) {
-            if (cell[0] == row && cell[1] == col) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Является ли "сота" выбранной занятой
      *
      * @param row int
@@ -252,7 +178,6 @@ public final class Field {
     public void clear() {
         board = new FieldObject[10][10];
         selectedCells.clear();
-        currentShipCoordinates.clear();
         shipOrientation = -1;
 
         setDefaultConfig();
@@ -273,35 +198,6 @@ public final class Field {
         return true;
     }
 
-    /**
-     * Создание новго корабля из текущих координат
-     *
-     * @return FieldObject?
-     */
-    public FieldObject createShipFromCurrentCoordinates() {
-        FieldObject result = createShip(currentShipCoordinates);
-        if (result != null) {
-            currentShipCoordinates.clear();
-        }
-        return result;
-    }
-
-    /**
-     * Создание мины из текущих координат
-     */
-    public FieldObject createMineFromCurrentCoordinates() {
-        if (this.currentShipCoordinates.size() != 1) {
-            return null;
-        }
-
-        int[] coordinates = this.currentShipCoordinates.get(0);
-        FieldObject mine = createMine(coordinates[0], coordinates[1]);
-        if (mine != null) {
-            currentShipCoordinates.clear();
-        }
-        return mine;
-    }
-
 
     /**
      * Есть ли возможость создать мину
@@ -318,7 +214,7 @@ public final class Field {
      * @param len Integer
      * @return boolean
      */
-    private boolean canCreateShip(Integer len) {
+    public boolean canCreateShip(Integer len) {
         Integer count = this.shipCounts.get(len);
         if (count == null) {
             return false;
@@ -332,7 +228,10 @@ public final class Field {
      * @param points Координаты корабля
      * @return FieldObject новый корабл
      */
-    private FieldObject createShip(List<int[]> points) {
+    public FieldObject createShip(List<int[]> points) {
+        if (points.size() > 4) {
+            return null;
+        }
         if (!canCreateShip(points.size())) {
             return null;
         }
@@ -351,18 +250,19 @@ public final class Field {
     /**
      * Создание мины по переданной координате
      *
-     * @param row int X
-     * @param col int Y
+     * @param coordinates int[2] координаты мины
      * @return Новая мина
      */
-    private FieldObject createMine(int row, int col) {
+    public FieldObject createMine(int[] coordinates) {
 
         if (!canCreateMine()) {
             return null;
         }
 
+        int row = coordinates[0];
+        int col = coordinates[1];
         List<int[]> points = new ArrayList<>();
-        points.add(new int[]{row, col});
+        points.add(coordinates);
         Mine mine = new Mine(points);
         board[row][col] = mine;
         selectedCells.add(new int[]{row, col});
@@ -447,7 +347,7 @@ public final class Field {
                 tries++;
                 continue;
             }
-            FieldObject newMine = createMine(row, col);
+            FieldObject newMine = createMine(new int[]{row, col});
             if (newMine != null) {
                 return newMine;
             }
@@ -471,24 +371,6 @@ public final class Field {
         }
         shipCounts.put(shipSize, currentCount - 1);
         return true;
-    }
-
-    /**
-     * Определение направленности нового корабля
-     */
-    private void determineShipOrientation() {
-        if (currentShipCoordinates.size() < 2) {
-            return;
-        }
-
-        int[] firstCell = currentShipCoordinates.get(0);
-        int[] secondCell = currentShipCoordinates.get(1);
-
-        if (firstCell[0] == secondCell[0]) {
-            shipOrientation = 0; // Горизонтальный
-        } else if (firstCell[1] == secondCell[1]) {
-            shipOrientation = 1; // Вертикальный
-        }
     }
 
     /**

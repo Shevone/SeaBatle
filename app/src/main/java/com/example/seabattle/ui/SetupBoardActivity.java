@@ -28,8 +28,7 @@ public class SetupBoardActivity extends AppCompatActivity {
     private final String NOT_READY_TEXT = "Поле еще не готово к битве!";
     private final String ERROR_CREATE_TEXT = "Ошибка при создании объекта на поле";
 
-    private LinearLayout mainLayout;
-    private LinearLayout gridContainer;
+
     private GridLayout gridLayout;
     private TextView[][] gridCells;
 
@@ -52,8 +51,6 @@ public class SetupBoardActivity extends AppCompatActivity {
             finish();
             return;
         }
-        mainLayout = findViewById(R.id.mainLayout);
-        gridContainer = findViewById(R.id.gridContainer);
         gridLayout = findViewById(R.id.grid_layout);
         gridCells = new TextView[10][10];
 
@@ -207,7 +204,7 @@ public class SetupBoardActivity extends AppCompatActivity {
                 cell.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onCellClick(cell, finalRow, finalCol);
+                        //onCellClick(cell, finalRow, finalCol);
                     }
                 });
 

@@ -104,7 +104,6 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
         });
 
         this.drawBoard(currentPlayerCells, player.getPlayerBoard());
-        this.drawBoard(oppCells, bot.getPlayerBoard());
     }
 
     private int calculateCellSize() {

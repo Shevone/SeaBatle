@@ -188,10 +188,8 @@ public class GameService {
             case HIT:
                 break;
             case DESTROYED:
-                int b =5;
                 break;
             case IMPOSSIBLE:
-                int a =5;
                 return;
         }
     }

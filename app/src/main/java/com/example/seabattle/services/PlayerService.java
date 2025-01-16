@@ -81,15 +81,6 @@ public class PlayerService {
     }
 
     /**
-     * Создает бота
-     *
-     * @return Bot
-     */
-    public Bot createBot(){
-        return new Bot();
-    }
-
-    /**
      * Возвращает всех игроков из файла.
      *
      * @return Список всех игроков.

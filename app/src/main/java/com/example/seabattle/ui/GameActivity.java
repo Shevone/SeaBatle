@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.seabattle.R;
 import com.example.seabattle.helpers.CustomAlertDialog;
-import com.example.seabattle.helpers.Timer;
 import com.example.seabattle.models.field.object.FieldObject;
 import com.example.seabattle.models.game.ShotResult;
 import com.example.seabattle.models.user.Player;
@@ -36,9 +35,7 @@ import java.util.Map;
 
 public class GameActivity extends AppCompatActivity implements GameObserver {
 
-    private static final int MAX_CELL_SIZE_DP = 90;
-    private static final int MIN_CELL_SIZE_DP = 20;
-    private final Map<Integer, TextView[][]> cellsByPlayer = new HashMap<>();
+   private final Map<Integer, TextView[][]> cellsByPlayer = new HashMap<>();
     private int maxCellWidth = 0;
 
     private VibrationService vibrationService;
@@ -103,7 +100,7 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
             }
         });
 
-        this.drawBoard(currentPlayerCells, player.getPlayerBoard());
+        this.drawFiledObjectOnBoard(currentPlayerCells, player.getPlayerBoard());
     }
 
     private int calculateCellSize() {
@@ -141,7 +138,7 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
      * @param cells сетка
      * @param board сетка в виде массива
      */
-    private void drawBoard(TextView[][] cells, FieldObject[][] board) {
+    private void drawFiledObjectOnBoard(TextView[][] cells, FieldObject[][] board) {
         for (int i = 0; i < board.length; i++) {
             for (int m = 0; m < board[i].length; m++) {
                 FieldObject obj = board[i][m];
@@ -175,7 +172,6 @@ public class GameActivity extends AppCompatActivity implements GameObserver {
     @Override
     protected void onStop() {
         super.onStop();
-//        timer.stop();
     }
 
     /**
